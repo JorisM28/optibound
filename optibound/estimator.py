@@ -61,7 +61,8 @@ class MonteCarloLipschitz:
 
         if N_valid == 0:
             raise RuntimeError(
-                "None valid pair found. Increase the domain or reduce epsilon."
+                "None valid pair found. Increase the domain or reduce" \
+                "epsilon."
             )
 
         mean_R = sum_R / N_valid

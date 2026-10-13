@@ -22,7 +22,7 @@ class BaseFunction(ABC):
 
         val = self(x_clone)
 
-        grad = torch.autograd.grad(val, x_clone)[0]
+        grad = torch.autograd.grad(val.sum(), x_clone)[0]
 
         return grad
 
@@ -38,6 +38,6 @@ class EllipticBowl(BaseFunction):
 
     def __call__(self, x):
 
-        return self.a * x[0]**2 + self.b * x[1]**2
+        return self.a * x[..., 0]**2 + self.b * x[..., 1]**2
 
 
