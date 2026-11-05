@@ -38,18 +38,67 @@ class GradientDescent:
             return x_next.squeeze(0), grad.squeeze(0)
 
 
-        def minimize(x_init):
+        def minimize(self, x_init):
 
-            x_init = torch.tensor([8.0, 8.0])
+            if not isinstance(x_init, torch.Tensor):
+                x = torch.tensor(x_init, dtype=torch.float32)
+            else:
+                x = x_init.clone().detach().to(dtype=torch.float32)
 
-            self.history["status"] = "active"
-            self.history["x"] = x_init
-            self.history["loss"] = self.func(x_init)
 
-            grad_norm = torch.linalg.vector_norm(self.func.gradient(x_init).item()
-            self.history["grad_norm"] = grad
-            
-            for _ in range(max_iter):
+            loss_init = self.func(x.unsqueeze(0)).item()
+            grad_init = self.func.gradient(x.unsqueeze(0)).detach()
+            grad_norm_init = torch.linalg.vector_norm(grad_init).item()
+
+
+            self.history["x"].append(x.clone())
+            self.history["loss"].append(loss_init)
+            self.history["grad_norm"].append(grad_norm_init)
+            self.history["status"] = "running"
+
+
+            for _ in range(self.max_iter):
+                
+                x_next, grad = self.step(x)
+                x = x_next  
+                
+                loss_val = self.func(x.unsqueeze(0)).item()
+                grad_norm = torch.linalg.vector_norm(grad).item()
+                
+                self.history["x"].append(x.clone().detach())
+                self.history["loss"].append(loss_val)
+                self.history["grad_norm"].append(grad_norm)
+                
+
+                if loss_val > self.divergence_threshold or math.isnan(loss_val) or math.isinf(loss_val):
+                    self.history["status"] = "diverged"
+                    break
+                    
+
+                if grad_norm < self.tol:
+                    self.history["status"] = "converged"
+                    break
+
+
+            if self.history["status"] == "running":
+                self.history["status"] = "max_iter_reached"
+
+            return x
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
 
 
 
