@@ -1,5 +1,6 @@
 import numpy as np
-
+import torch
+import math
 
 
 
@@ -70,7 +71,7 @@ class GradientDescent:
             self.history["grad_norm"].append(grad_norm)
             
 
-            if loss_val > self.divergence_threshold or math.isnan(loss_val) or math.isinf(loss_val):
+            if loss_val > self.divergence_thresold or math.isnan(loss_val) or math.isinf(loss_val):
                 self.history["status"] = "diverged"
                 break
                 
